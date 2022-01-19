@@ -8,21 +8,21 @@ import (
 )
 
 type InitConsulRequest struct {
-	Name                           string
-	Tags                           []string
-	Timeout                        int
-	Interval                       int
-	DeregisterCriticalServiceAfter int
-	CheckRouter                    string // 健康检查路由
-	IsSSL                          bool   // 是否是https
+	Name                           string   `json:"Name"`
+	Tags                           []string `json:"Tags"`
+	Timeout                        int      `json:"Timeout"`
+	Interval                       int      `json:"Interval"`
+	DeregisterCriticalServiceAfter int      `json:"DeregisterCriticalServiceAfter"`
+	CheckRouter                    string   `json:"CheckRouter"` // 健康检查路由
+	IsSSL                          bool     `json:"IsSSL"`       // 是否是https
 	Consul                         struct {
-		Host string
-		Port int
-	}
+		Host string `json:"Host"`
+		Port int    `json:"Port"`
+	} `json:"Consul"`
 	Project struct {
-		Host string
-		Port int
-	}
+		Host string `json:"Host"`
+		Port int    `json:"Port"`
+	} `json:"Project"`
 }
 
 // consul 初始化

@@ -12,18 +12,18 @@ import (
 
 // 初始化 Nacos
 type InitNacosRequest struct {
-	Host                string
-	Port                uint64
-	NamespaceId         string
-	DataId              string
-	Group               string
-	NotLoadCacheAtStart bool
-	LogDir              string
-	CacheDir            string
-	TimeoutMs           uint64 // (选填)
-	RotateTime          string // (选填)
-	MaxAge              int64  // (选填)
-	LogLevel            string // (选填)
+	Host                string `json:"Host"`
+	Port                uint64 `json:"Port"`
+	NamespaceId         string `json:"NamespaceId"`
+	DataId              string `json:"DataId"`
+	Group               string `json:"Group"`
+	NotLoadCacheAtStart bool   `json:"NotLoadCacheAtStart"`
+	LogDir              string `json:"LogDir"`
+	CacheDir            string `json:"CacheDir"`
+	TimeoutMs           uint64 `json:"TimeoutMs"`  // (选填)
+	RotateTime          string `json:"RotateTime"` // (选填)
+	MaxAge              int64  `json:"MaxAge"`     // (选填)
+	LogLevel            string `json:"LogLevel"`   // (选填)
 }
 
 func InitNacos(init InitNacosRequest, config interface{}) (config_client.IConfigClient, error) {
@@ -80,4 +80,20 @@ func InitNacos(init InitNacosRequest, config interface{}) (config_client.IConfig
 	}
 
 	return configClient, nil
+}
+
+// method 对返回错误进行错误处理 可以默认nil
+func ListenNacos(init InitNacosRequest, client config_client.IConfigClient, config interface{}, method func(error)) {
+	_ = client.ListenConfig(vo.ConfigParam{
+		DataId: init.DataId,
+		Group:  init.Group,
+		OnChange: func(_, _, _, data string) {
+			if method == nil {
+				json.Unmarshal([]byte(data), &config)
+			} else {
+				err := json.Unmarshal([]byte(data), &config)
+				method(err)
+			}
+		},
+	})
 }
